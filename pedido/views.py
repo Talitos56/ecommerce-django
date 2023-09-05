@@ -19,7 +19,7 @@ class DispatchLoginRequiredMixin(View):
         return super().dispatch(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
+        qs = super().get_queryset(*args, **kwargs)  # type: ignore
         qs = qs.filter(usuario=self.request.user)
         return qs
 
@@ -50,7 +50,7 @@ class SalvarPedido(View):
             return redirect('produto:lista')
 
         carrinho = self.request.session.get('carrinho')
-        carrinho_variacao_ids = [v for v in carrinho]
+        carrinho_variacao_ids = [v for v in carrinho]  # type: ignore
         bd_variacoes = list(
             Variacao.objects.select_related('produto')
             .filter(id__in=carrinho_variacao_ids)
@@ -60,14 +60,15 @@ class SalvarPedido(View):
             vid = str(variacao.pk)
 
             estoque = variacao.estoque
-            qtd_carrinho = carrinho[vid]['quantidade']
-            preco_unt = carrinho[vid]['preco_unitario']
-            preco_unt_promo = carrinho[vid]['preco_unitario_promocional']
+            qtd_carrinho = carrinho[vid]['quantidade']  # type: ignore
+            preco_unt = carrinho[vid]['preco_unitario']  # type: ignore
+            preco_unt_promo = \
+                carrinho[vid]['preco_unitario_promocional']  # type: ignore
 
             error_msg_estoque = ''
 
             if estoque < qtd_carrinho:
-                carrinho[vid]['quantidade'] = estoque
+                carrinho[vid]['quantidade'] = estoque  # type: ignore
                 carrinho[vid]['preco_quantitativo'] = estoque * preco_unt
                 carrinho[vid]['preco_quantitativo_promocional'] = estoque * \
                     preco_unt_promo
